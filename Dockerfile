@@ -136,6 +136,10 @@ RUN conda install jupyterlab=3.3.2  --yes && \
 # install additional kernel based packages
 # RUN conda install package1 package2
 
+RUN conda install r-lme4 r-venndiagram r-gridextra && \
+#    conda install -c bioconda r-car && \
+    conda install r-car && \
+	conda clean -a -y
 
 # add the jupyter XFCE desktop
 USER root
