@@ -1,0 +1,5 @@
+#!/bin/sh
+cd "$HOME"
+while true; do
+   /usr/bin/dbus-launch xfce4-session
+done
