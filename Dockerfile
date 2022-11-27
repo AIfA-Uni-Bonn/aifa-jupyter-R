@@ -138,7 +138,7 @@ RUN conda install jupyterlab=3.3.2  --yes && \
 
 RUN conda install r-lme4 r-venndiagram r-gridextra && \
 #    conda install -c bioconda r-car && \
-    conda install r-car && \
+    conda install r-car r-lmertest && \
 	conda clean -a -y
 
 # add the jupyter XFCE desktop
@@ -190,9 +190,9 @@ COPY vnc/xstartup /opt/conda/lib/python3.9/site-packages/jupyter_desktop/share/
 
 USER root
 
-RUN wget "https://packages.microsoft.com/repos/code/pool/main/c/code/code_1.71.2-1663191218_amd64.deb" && \
-    apt install ./code_1.71.2-1663191218_amd64.deb  && \
-    rm -f ./code_1.71.2-1663191218_amd64.deb
+RUN wget "https://packages.microsoft.com/repos/code/pool/main/c/code/code_1.73.1-1667967334_amd64.deb" && \
+    apt install ./code_*.deb  && \
+    rm -f ./code_*.deb
 
 USER $NB_UID
 
