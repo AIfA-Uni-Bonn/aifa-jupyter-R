@@ -86,17 +86,20 @@ USER $NB_UID
 # The conda-forge channel is already present in the system .condarc file, so there is no need to
 # add a channel invocation in any of the next commands.
 
+# install mamba
+RUN conda install mamba
+
 # install jupyterlab
-RUN conda install jupyterlab=3.3.2  --yes && \
+RUN mamba install jupyterlab=3.3.2  --yes && \
         # Add nbgrader 0.6.1 to the image
         # More info at https://nbgrader.readthedocs.io/en/stable/
         # conda install nbgrader=0.6.1 --yes &6 \
         # Add the notebook extensions
-        conda install jupyter_contrib_nbextensions --yes && \
+        mamba install jupyter_contrib_nbextensions --yes && \
 
 	# add extensions by conda
-        conda install ipywidgets ipyevents ipympl jupyterlab_latex --yes && \
-        conda install version_information jupyter-archive>=3.3.0 jupyterlab-git --yes && \
+        mamba install ipywidgets ipyevents ipympl jupyterlab_latex --yes && \
+        mamba install version_information jupyter-archive>=3.3.0 jupyterlab-git --yes && \
 
         # jupyterlab extensions
 
@@ -104,7 +107,7 @@ RUN conda install jupyterlab=3.3.2  --yes && \
         pip install jupyterlab-topbar jupyterlab-logout && \
 
         # memory display in bottom line
-        conda install nbresuse && \
+        mamba install nbresuse && \
 
 	# theme toggling extension
         # interactive widgets
@@ -120,7 +123,7 @@ RUN conda install jupyterlab=3.3.2  --yes && \
 
 
 	# install the spellchecker and latex extension
-        conda install jupyterlab-spellchecker jupyterlab-latex && \
+        mamba install jupyterlab-spellchecker jupyterlab-latex && \
 
 	# apply the latex configuration
 
@@ -130,16 +133,18 @@ RUN conda install jupyterlab=3.3.2  --yes && \
         echo "c.LatexConfig.run_times = 2" >> /etc/jupyter/jupyter_notebook_config.py && \
 
 	# remove all unwanted stuff
-        conda clean -a -y
+        mamba clean -a -y
 
 
 # install additional kernel based packages
-# RUN conda install package1 package2
+# RUN mamba install package1 package2
 
-RUN conda install r-lme4 r-venndiagram r-gridextra && \
+RUN mamba install r-lme4 r-venndiagram r-gridextra && \
 #    conda install -c bioconda r-car && \
-    conda install r-car r-lmertest && \
-	conda clean -a -y
+    mamba install r-car r-lmertest && \
+    mamba install r-tidyverse r-venndiagram  r-reshape2 r-rcolorbrewer  r-statmod r-gplots && \
+    mamba install -c bioconda bioconductor-limma bioconductor-edger && \
+    mamba  clean -a -y
 
 # add the jupyter XFCE desktop
 USER root
@@ -175,7 +180,7 @@ RUN chown -R $NB_UID:$NB_GID $HOME
 
 USER $NB_UID
 
-RUN conda install jupyter-server-proxy>=1.4 websockify
+RUN mamba install jupyter-server-proxy>=1.4 websockify
 
 # install jupyter-remote-desktop (fork with all patches and merges)
 #RUN pip install https://github.com/jupyterhub/jupyter-remote-desktop-proxy/archive/refs/heads/main.zip
