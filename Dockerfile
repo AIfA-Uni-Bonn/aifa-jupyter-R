@@ -3,8 +3,11 @@
 
 # taking the latest image
 
-# Sep. 20 2022
-FROM jupyter/r-notebook:r-4.1.3
+## Sep. 20 2022
+#FROM jupyter/r-notebook:r-4.1.3
+
+# Jan 16 2022
+FROM jupyter/r-notebook:r-4.2.2
 
 
 LABEL maintainer="AIfA Jupyter Project <ocordes@astro.uni-bonn.de>"
@@ -78,6 +81,27 @@ COPY policy.xml /etc/ImageMagick-6/
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod 755 /usr/local/bin/start.sh
 
+# add the jupyter XFCE desktop
+
+RUN apt-get -y update \
+ && apt-get install -y dbus-x11 \
+   firefox epiphany-browser \
+   xfce4 xfce4-panel xfce4-session xfce4-settings xfce4-terminal \
+   xorg \
+   fuse lftp rsync unrar unzip \
+   xubuntu-icon-theme \
+   libreoffice libreoffice-l10n-de texstudio gnumeric gnupg2 kile  \
+   xterm \
+   emacs kate vim-gtk3 dia gedit geany gnuplot-x11 gnuplot info \
+   gnome-terminal \
+   evince atril  \
+   codeblocks \
+   gcc g++ gfortran binutils bison flex patch clang ffmpeg gdb m4 mailutils mc  \
+ && apt-get -qq purge \
+ && apt-get -qq clean \
+ && rm -rf /var/lib/apt/lists/*
+
+
 # switch back to jovyan to install conda packages
 
 USER $NB_UID
@@ -142,41 +166,12 @@ RUN mamba install jupyterlab=3.3.2  --yes && \
 RUN mamba install r-lme4 r-venndiagram r-gridextra && \
 #    conda install -c bioconda r-car && \
     mamba install r-car r-lmertest && \
-    mamba install r-tidyverse r-venndiagram  r-reshape2 r-rcolorbrewer  r-statmod r-gplots && \
+    mamba install r-tidyverse r-venndiagram  r-reshape2 r-rcolorbrewer  r-statmod  r-gplots && \
     mamba install -c bioconda bioconductor-limma bioconductor-edger && \
     mamba  clean -a -y
 
-# add the jupyter XFCE desktop
+
 USER root
-
-RUN apt-get -y update \
- && apt-get install -y dbus-x11 \
-   firefox epiphany-browser \
-   xfce4 xfce4-panel xfce4-session xfce4-settings xfce4-terminal \
-   xorg \
-   fuse lftp rsync unrar unzip \
-   xubuntu-icon-theme \
-   libreoffice libreoffice-l10n-de texstudio gnumeric gnupg2 kile  \
-   xterm \
-   emacs kate vim-gtk3 dia gedit geany gnuplot-x11 gnuplot info \
-   gnome-terminal \
-   evince atril  \
-   codeblocks \
-   gcc g++ gfortran binutils bison flex patch clang ffmpeg gdb m4 mailutils mc  \
- && apt-get -qq purge \
- && apt-get -qq clean \
- && rm -rf /var/lib/apt/lists/*
-
-# Remove light-locker to prevent screen lock
-ARG TURBOVNC_VERSION=2.2.6
-RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-   apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-   apt-get remove -y -q light-locker && \
-   rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-   ln -s /opt/TurboVNC/bin/* /usr/local/bin/
-
-# apt-get may result in root-owned directories/files under $HOME
-RUN chown -R $NB_UID:$NB_GID $HOME
 
 USER $NB_UID
 
